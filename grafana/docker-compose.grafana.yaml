@@ -30,7 +30,7 @@ services:
     container_name: arisa-grafana-loki
     volumes:
       - loki-data:/loki
-      - loki-config:/etc/loki/local-config.yaml
+      - loki-config:/etc/loki
     networks:
       grafana-network:
 
