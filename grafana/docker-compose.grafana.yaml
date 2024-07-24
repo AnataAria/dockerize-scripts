@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:14.5
+    container_name: grafana-postgres
+    restart: unless-stopped
+    networks:
+      - grafana-network
+    environment:
+      POSTGRES_USER: grafana
+      POSTGRES_PASSWORD: grafana
+      POSTGRES_DB: grafana
+    volumes:
+      - pgdata-grafana:/var/lib/postgresql/data 
+
+  arisa-grafana:
+    image: grafana/grafana-enterprise
+    container_name: arisa-grafana
+    hostname: arisa-grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - grafana-network
+  
+  arisa-grafana-loki:
+    image: grafana/loki
+    container_name: arisa-grafana-loki
+    volumes:
+      - loki-data:/loki
+    networks:
+      grafana-network:
+      
+
+volumes:
+  grafana-storage:
+  pgdata-grafana:
+
+networks:
+  grafana-network:
