@@ -7,8 +7,8 @@ services:
     networks:
       - grafana-network
     environment:
-      POSTGRES_USER: grafana
-      POSTGRES_PASSWORD: grafana
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: grafana
     volumes:
       - pgdata-grafana:/var/lib/postgresql/data 
@@ -30,13 +30,15 @@ services:
     container_name: arisa-grafana-loki
     volumes:
       - loki-data:/loki
+      - loki-config:/etc/loki/local-config.yaml
     networks:
       grafana-network:
-      
 
 volumes:
   grafana-storage:
+  loki-data:
   pgdata-grafana:
+  loki-config:
 
 networks:
   grafana-network:
