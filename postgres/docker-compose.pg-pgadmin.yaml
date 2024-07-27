@@ -1,29 +1,31 @@
-version: '3.7'
+version: "3.7"
 services:
-
   postgres:
     image: postgres:14.12-bullseye
+    container_name: postgres-db
     restart: always
     environment:
       POSTGRES_PASSWORD: ${DB_PASS}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_DB: ${DB}
-    networks: 
+    networks:
       postgres-admin:
 
   pgadmin4:
-      image: elestio/pgadmin:latest
-      restart: always
-      environment:
-        PGADMIN_DEFAULT_EMAIL: ${PG_EMAIL}
-        PGADMIN_DEFAULT_PASSWORD: ${PG_PASSWORD}
-        PGADMIN_LISTEN_PORT: ${PG_PORT}
-      networks:
-        postgres-admin:
-      ports:
+    image: elestio/pgadmin:latest
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PG_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PG_PASSWORD}
+      PGADMIN_LISTEN_PORT: ${PG_PORT}
+    networks:
+      postgres-admin:
+    ports:
       - ${PG_PORT}:${PG_PORT}
 
 networks:
   postgres-admin:
+    name: postgres-admin
     ipam:
       driver: default
