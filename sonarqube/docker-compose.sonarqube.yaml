@@ -26,8 +26,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    hostname: postgresql
-    container_name: postgresql
+    hostname: postgresql-sonarqube
+    container_name: postgresql-sonarqube
     networks:
       - sonarqube-networks
     environment:
