@@ -1,17 +1,16 @@
 version: '3.8'
 services:
-  semaphore-mysql:
-    container_name: semaphore_mysql
+  semaphore-postgres:
+    image: postgres:14.12-bullseye
+    container_name: semaphore_postgres
     restart: unless-stopped
-    hostname: semaphore-mysql
-    image: mysql:latest
-    volumes:
-      - semaphore-mysql:/var/lib/mysql
+    hostname: semaphore-postgres
     environment:
-      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
-      MYSQL_DATABASE: semaphore
-      MYSQL_USER: semaphore
-      MYSQL_PASSWORD: semaphore
+      POSTGRES_PASSWORD: semaphore
+      POSTGRES_USER: semaphore
+      POSTGRES_DB: semaphore
+    volumes:
+      - semaphore-postgres:/var/lib/postgresql/data
     networks:
       semaphore-networks:
 
@@ -24,10 +23,10 @@ services:
     environment:
       SEMAPHORE_DB_USER: semaphore
       SEMAPHORE_DB_PASS: semaphore
-      SEMAPHORE_DB_HOST: semaphore-mysql # for postgres, change to: postgres
-      SEMAPHORE_DB_PORT: 3306 # change to 5432 for postgres
+      SEMAPHORE_DB_HOST: semaphore-postgres # for postgres, change to: postgres
+      SEMAPHORE_DB_PORT: 5432 # change to 5432 for postgres
       SEMAPHORE_DB: semaphore
-      SEMAPHORE_DB_DIALECT: mysql # for postgres, change to: postgres
+      SEMAPHORE_DB_DIALECT: postgres # for postgres, change to: postgres
       SEMAPHORE_ADMIN_PASSWORD: 
       SEMAPHORE_ADMIN_NAME: Arisa
       SEMAPHORE_ADMIN_EMAIL: arisa@email.com
@@ -37,7 +36,7 @@ services:
       semaphore-networks:
     
 volumes:
-  semaphore-mysql: # to use postgres, switch to: semaphore-postgres
+  semaphore-postgres: # to use postgres, switch to: semaphore-postgres
   
 networks:
   semaphore-networks:
