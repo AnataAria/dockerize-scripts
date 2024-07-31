@@ -1,0 +1,46 @@
+version: '3.8'
+services:
+  semaphore-mysql:
+    container_name: semaphore_mysql
+    restart: unless-stopped
+    hostname: semaphore-mysql
+    image: mysql:8.0
+    volumes:
+      - semaphore-mysql:/var/lib/mysql
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE: semaphore
+      MYSQL_USER: semaphore
+      MYSQL_PASSWORD: semaphore
+    networks:
+      semaphore-networks:
+
+  semaphore:
+    container_name: arisa_semaphore
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    image: semaphoreui/semaphore:latest
+    environment:
+      SEMAPHORE_DB_USER: semaphore
+      SEMAPHORE_DB_PASS: semaphore
+      SEMAPHORE_DB_HOST: semaphore-mysql # for postgres, change to: postgres
+      SEMAPHORE_DB_PORT: 3306 # change to 5432 for postgres
+      SEMAPHORE_DB: semaphore
+      SEMAPHORE_DB_DIALECT: mysql # for postgres, change to: postgres
+      SEMAPHORE_ADMIN_PASSWORD: 
+      SEMAPHORE_ADMIN_NAME: Arisa
+      SEMAPHORE_ADMIN_EMAIL: arisa@email.com
+      SEMAPHORE_ADMIN: admin
+      SEMAPHORE_ACCESS_KEY_ENCRYPTION: gs72mPntFATGJs9qK0pQ0rKtfidlexiMjYCH9gWKhTU=
+    networks:
+      semaphore-networks:
+    
+volumes:
+  semaphore-mysql: # to use postgres, switch to: semaphore-postgres
+  
+networks:
+  semaphore-networks:
+    name: semaphore-networks
+    ipam:
+      driver: default
