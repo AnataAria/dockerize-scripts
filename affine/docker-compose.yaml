@@ -1,0 +1,97 @@
+services:
+  affine:
+    image: ghcr.io/toeverything/affine-graphql:stable
+    container_name: affine_selfhosted
+    command:
+      ['sh', '-c', 'node ./scripts/self-host-predeploy && node ./dist/index.js']
+    ports:
+      - '3010:3010'
+      - '5555:5555'
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    volumes:
+      # custom configurations
+      - affine-config:/root/.affine/config
+      # blob storage
+      - affine-storage:/root/.affine/storage
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '1000m'
+    restart: unless-stopped
+    networks:
+      - affine-network
+    environment:
+      - NODE_OPTIONS="--import=./scripts/register.js"
+      - AFFINE_CONFIG_PATH=/root/.affine/config
+      - REDIS_SERVER_HOST=redis
+      - DATABASE_URL=postgres://affine:affine@postgres:5432/affine
+      - NODE_ENV=production
+      - AFFINE_ADMIN_EMAIL=${AFFINE_ADMIN_EMAIL}
+      - AFFINE_ADMIN_PASSWORD=${AFFINE_ADMIN_PASSWORD}
+      - AFFINE_SERVER_PORT=${AFFINE_SERVER_PORT}
+      - AFFINE_SERVER_HOST=${AFFINE_SERVER_HOST}
+      - AFFINE_SERVER_HTTPS=true
+      - OAUTH_GITHUB_CLIENT_ID=${OAUTH_GITHUB_CLIENT_ID}
+      - OAUTH_GITHUB_CLIENT_SECRET=${OAUTH_GITHUB_CLIENT_SECRET}
+      - MAILER_HOST=${MAILER_HOST}
+      - MAILER_PORT=${MAILER_PORT}
+      - MAILER_USER=${MAILER_USER}  
+      - MAILER_PASSWORD=${MAILER_PASSWORD}
+      - MAILER_SENDER=${MAILER_SENDER}
+      - MAILER_SECURE=${MAILER_SECURE}
+      # - OAUTH_GOOGLE_CLIENT_ID=${OAUTH_GOOGLE_CLIENT_ID}
+      # - OAUTH_GOOGLE_CLIENT_SECRET=${OAUTH_GOOGLE_CLIENT_SECRET}
+      # Telemetry allows us to collect data on how you use the affine. This data will helps us improve the app and provide better features.
+      # Uncomment next line if you wish to quit telemetry.
+      # - TELEMETRY_ENABLE=false
+  redis:
+    image: redis
+    container_name: affine_redis
+    restart: unless-stopped
+    volumes:
+      - redis-affine-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', '--raw', 'incr', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - affine-network
+
+  postgres:
+    image: postgres
+    container_name: affine_postgres
+    restart: unless-stopped
+    volumes:
+      - postgres-affine-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U affine']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: affine
+      POSTGRES_PASSWORD: affine
+      POSTGRES_DB: affine
+      PGDATA: /var/lib/postgresql/data/pgdata
+    networks:
+      - affine-network
+
+volumes:
+  redis-affine-data:
+    name: redis-affine-data
+  postgres-affine-data:
+    name: postgres-affine-data
+  affine-config:
+    name: affine-config
+  affine-storage:
+    name: affine-storage
+
+networks:
+  affine-network:
+    name: affine-network
+  
