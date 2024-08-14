@@ -5,6 +5,8 @@ services:
     image: ghcr.io/home-assistant/home-assistant:stable
     environment:
       - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - 8123:8123
     volumes:
       - config:/config
       - dbus:/run/dbus:ro
