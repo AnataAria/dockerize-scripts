@@ -1,0 +1,23 @@
+services:
+  home-assistant:
+    container_name: home_assistant
+    restart: unless-stopped
+    image: ghcr.io/home-assistant/home-assistant:stable
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - config:/config
+      - dbus:/run/dbus:ro
+    networks:
+      - home_assistant
+
+
+volumes:
+  config:
+    name: home_assistant_config
+  dbus:
+    name: home_assistant_dbus
+
+networks:
+  home_assistant:
+    name: home-assistant-network
