@@ -1,0 +1,17 @@
+name: sql_server
+services:
+  sql-server:
+    container_name: sql_server
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=yourStrong(!)Password
+      - MSSQL_PID=Express
+    ports:
+      - 1443:1443
+    networks:
+      - sql-server-networks
+
+networks:
+  sql-server-networks:
+    name: sql_server_networks
