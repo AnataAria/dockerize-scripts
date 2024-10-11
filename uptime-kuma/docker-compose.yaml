@@ -1,0 +1,7 @@
+services:
+  uptime-kuma:
+    container_name: arisa_uptime_kuma
+    image: louislam/uptime-kuma:latest
+    restart: always
+    ports:
+      - 3001:3001
