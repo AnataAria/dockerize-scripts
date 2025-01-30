@@ -1,1 +1,29 @@
 version: '3.7'
+
+services:
+  db:
+    container_name: mysql_database
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Vinh12345.
+    ports:
+      - 3306:3306
+    networks:
+      - mysql-networks 
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    networks:
+      - mysql-networks
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_USER=root
+      - PMA_PASSWORD=Vinh12345.
+
+networks:
+  mysql-networks:
+    name: mysql_networks 

@@ -1,0 +1,43 @@
+services:
+  ollama-services:
+    image: ollama/ollama
+    container_name: ollama_services
+    restart: unless-stopped
+    runtime: nvidia
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      - TF_FORCE_GPU_ALLOW_GROWTH=true
+    deploy:
+      resources:
+        limits:
+          memory: "8g"
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      - ollama-volumes:/root/.ollama
+    networks:
+      - ollama-networks
+
+  ollama-ui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: ollama_ui
+    restart: unless-stopped
+    environment:
+      - OLLAMA_BASE_URL=http://ollama-services:11434
+    ports:
+      - "1000:8080"
+    depends_on:
+      - ollama-services
+    networks:
+      - ollama-networks
+
+volumes:
+  ollama-volumes:
+    name: ollama_volumes
+
+networks:
+  ollama-networks:
+    name: ollama_networks
