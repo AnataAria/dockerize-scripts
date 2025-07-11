@@ -1,0 +1,21 @@
+services:
+  memos:
+    image: neosmemo/memos:stable
+    container_name: memos
+    restart: unless-stopped
+    ports:
+      - 5230:5230
+    volumes:
+      - memos_data:/var/opt/memos
+    networks:
+      - memos_network
+
+networks:
+  memos_network:
+    driver: bridge
+    name: memos_network
+
+volumes:
+  memos_data:
+    driver: local
+    name: memos_data
