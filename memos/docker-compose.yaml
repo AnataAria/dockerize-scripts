@@ -3,10 +3,26 @@ services:
     image: neosmemo/memos:stable
     container_name: memos
     restart: unless-stopped
+    environment:
+      - MEMOS_DRIVER=postgres
+      - MEMOS_DSN=user=memos password=memos dbname=memos host=memos-database sslmode=disable
     ports:
       - 5230:5230
     volumes:
       - memos_data:/var/opt/memos
+    networks:
+      - memos_network
+  
+  memos-database:
+    image: postgres:16.1
+    container_name: memos-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: memos
+      POSTGRES_PASSWORD: memos
+      POSTGRES_DB: memos
+    volumes:
+      - memos_database_data:/var/lib/postgresql/data
     networks:
       - memos_network
 
@@ -19,3 +35,7 @@ volumes:
   memos_data:
     driver: local
     name: memos_data
+  memos_database_data:
+    driver: local
+    name: memos_database_data
+
